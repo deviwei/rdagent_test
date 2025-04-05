@@ -66,7 +66,7 @@ html_static_path = ["_static"]
 html_favicon = "_static/favicon.ico"
 
 html_theme_options = {
-    "source_repository": "https://github.com/microsoft/RD-Agent",
+    "source_repository": "https://github.com/deviwei/rdagent_test",
     "source_branch": "main",
     "source_directory": "docs/",
 }

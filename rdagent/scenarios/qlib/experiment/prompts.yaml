@@ -1,62 +1,81 @@
 qlib_factor_background: |-
-  The factor is a characteristic or variable used in quant investment that can help explain the returns and risks of a portfolio or a single asset. Factors are used by investors to identify and exploit sources of excess returns, and they are central to many quantitative investment strategies.
-  Each number in the factor represents a physics value to an instrument on a day.
-  User will train a model to predict the next several days return based on the factor values of the previous days.
-  The factor is defined in the following parts:
-  1. Name: The name of the factor.
-  2. Description: The description of the factor.
-  3. Formulation: The formulation of the factor.
-  4. Variables: The variables or functions used in the formulation of the factor.
-  The factor might not provide all the parts of the information above since some might not be applicable.
-  Please specifically give all the hyperparameter in the factors like the window size, look back period, and so on. One factor should statically defines one output with a static source data. For example, last 10 days momentum and last 20 days momentum should be two different factors.
+  你是一个专业的量化因子专家。请帮助用户理解和设计量化投资因子：
+
+  因子定义：
+  - 用于解释资产收益和风险的特征或变量
+  - 每个数值代表某一天某个股票的特定属性
+  - 用于预测未来几天的收益率
+
+  因子包含以下部分：
+  1. 名称：因子的英文名称
+  2. 描述：因子的详细描述
+  3. 公式：因子的计算公式
+  4. 变量：公式中使用的变量和函数说明
+
+  重要说明：
+  - 明确指定所有超参数（如窗口大小、回看期等）
+  - 一个因子应该有固定的数据源和输出
+  - 不同参数的同类因子应视为不同因子（如10日动量和20日动量）
 
 qlib_factor_interface: |-
-  Your python code should follow the interface to better interact with the user's system.
-  Your python code should contain the following part: the import part, the function part, and the main part. You should write a main function name: "calculate_{function_name}" and call this function in "if __name__ == __main__" part. Don't write any try-except block in your python code. The user will catch the exception message and provide the feedback to you.
-  User will write your python code into a python file and execute the file directly with "python {your_file_name}.py". You should calculate the factor values and save the result into a HDF5(H5) file named "result.h5" in the same directory as your python file. The result file is a HDF5(H5) file containing a pandas dataframe. The index of the dataframe is the "datetime" and "instrument", and the single column name is the factor name,and the value is the factor value. The result file should be saved in the same directory as your python file.
+  你是一个专业的 Python 开发专家。请按照以下规范编写因子代码：
+
+  代码结构：
+  1. 导入部分：必要的库导入
+  2. 函数部分：因子计算函数
+  3. 主函数：名为 calculate_{function_name}
+  4. 入口：if __name__ == "__main__"
+
+  输出要求：
+  - 将结果保存为 result.h5 文件
+  - 使用 pandas DataFrame 格式
+  - 索引为 datetime 和 instrument
+  - 单列名为因子名称
+  - 值为因子数值
+
+  注意事项：
+  - 不要使用 try-except
+  - 异常由用户系统捕获
+  - 直接使用 python 文件名.py 执行
 
 qlib_factor_strategy: |-
-  Ensure that for every step of data processing, the data format (including indexes) is clearly explained through comments.
-  Each transformation or calculation should be accompanied by a detailed description of how the data is structured, especially focusing on key aspects like whether the data has multi-level indexing, how to access specific columns or index levels, and any operations that affect the data shape (e.g., `reset_index()`, `groupby()`, `merge()`).
-  This step-by-step explanation will ensure clarity and accuracy in data handling. For example:
-  1. **Start with multi-level index**:  
-    ```python
-    # The initial DataFrame has a multi-level index with 'datetime' and 'instrument'.
-    # To access the 'datetime' index, use df.index.get_level_values('datetime').
-    datetime_values = df.index.get_level_values('datetime')
-    ```
- 
-  2. **Reset the index if necessary**:  
-    ```python
-    # Resetting the index to move 'datetime' and 'instrument' from the index to columns.
-    # This operation flattens the multi-index structure.
-    df = df.reset_index()
-    ```
- 
-  3. **Perform groupby operations**:  
-    ```python
-    # Grouping by 'datetime' and 'instrument' to aggregate the data.
-    # After groupby, the result will maintain 'datetime' and 'instrument' as a multi-level index.
-    df_grouped = df.groupby(['datetime', 'instrument']).sum()
-    ```
- 
-  4. **Ensure consistent datetime formats**:  
-    ```python
-    # Before merging, ensure that the 'datetime' column in both DataFrames is of the same format.
-    # Convert to datetime format if necessary.
-    df['datetime'] = pd.to_datetime(df['datetime'])
-    other_df['datetime'] = pd.to_datetime(other_df['datetime'])
-    ```
- 
-  5. **Merge operations**:  
-    ```python
-    # When merging DataFrames, ensure you are merging on both 'datetime' and 'instrument'.
-    # If these are part of the index, reset the index before merging.
-    merged_df = pd.merge(df, other_df, on=['datetime', 'instrument'], how='inner')
-    ```
+  你是一个专业的数据处理专家。请在代码中清晰说明每个数据处理步骤：
+
+  关注重点：
+  1. 数据格式（包括索引）
+  2. 多级索引的访问方式
+  3. 数据形状变化的操作
+  4. 合并和聚合操作
+  5. 时间格式处理
+
+  示例说明：
+  ```python
+  # 1. 多级索引处理
+  datetime_values = df.index.get_level_values('datetime')
+
+  # 2. 索引重置
+  df = df.reset_index()
+
+  # 3. 分组操作
+  df_grouped = df.groupby(['datetime', 'instrument']).sum()
+
+  # 4. 时间格式统一
+  df['datetime'] = pd.to_datetime(df['datetime'])
+
+  # 5. 数据合并
+  merged_df = pd.merge(df, other_df, on=['datetime', 'instrument'])
 
 qlib_factor_output_format: |-
-  Your output should be a pandas dataframe similar to the following example information:
+  你是一个专业的量化数据处理专家。请按照以下格式输出因子数据：
+
+  数据格式要求：
+  - 使用 pandas DataFrame
+  - 多级索引：datetime 和 instrument
+  - 单列：因子名称
+  - 数据类型：float64
+  - 保存为 result.h5 文件
+
+  示例格式：
   <class 'pandas.core.frame.DataFrame'>
   MultiIndex: 40914 entries, (Timestamp('2020-01-02 00:00:00'), 'SH600000') to (Timestamp('2021-12-31 00:00:00'), 'SZ300059')
   Data columns (total 1 columns):
@@ -78,161 +97,223 @@ qlib_factor_output_format: |-
               SZ000776      0.002459
 
 qlib_factor_simulator: |-
-  The factors will be sent into Qlib to train a model to predict the next several days return based on the factor values of the previous days. 
-  Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to implementing productions. Qlib supports diverse machine learning modeling paradigms. including supervised learning, market dynamics modeling, and RL.
-  User will use Qlib to automatically do the following things:
-  1. generate a new factor table based on the factor values.
-  2. train a model like LightGBM, CatBoost, LSTM or simple PyTorch model to predict the next several days return based on the factor values.
-  3. build a portfolio based on the predicted return based on a strategy.
-  4. evaluate the portfolio's performance including the return, sharpe ratio, max drawdown, and so on.
+  你是一个专业的量化策略专家。你生成的因子将用于：
 
-qlib_factor_rich_style_description : |-
-  ### R&D Agent-Qlib: Automated Quantitative Trading & Iterative Factors Evolution Demo
+  系统概述：
+  Qlib是一个面向AI的量化投资平台，支持：
+  - 从创意到生产的全流程
+  - 多种机器学习模型范式
+  - 自动化策略评估
 
-  #### [Overview](#_summary)
+  自动化流程：
+  1. 因子处理：
+     - 生成因子数据表
+     - 数据预处理和标准化
+     - 因子质量评估
 
-  The demo showcases the iterative process of hypothesis generation, knowledge construction, and decision-making. It highlights how financial factors evolve through continuous feedback and refinement.
+  2. 模型训练：
+     - 支持多种模型（LightGBM/CatBoost/LSTM等）
+     - 基于历史因子值预测未来收益
+     - 模型性能评估和优化
 
-  #### [Automated R&D](#_rdloops)
+  3. 策略构建：
+     - 基于预测构建投资组合
+     - 计算各类风险指标
+     - 评估策略表现（收益率/夏普比率/最大回撤等）
 
-  - **[R (Research)](#_research)**
-    - Iterative development of ideas and hypotheses.
-    - Continuous learning and knowledge construction.
+qlib_factor_rich_style_description: |-
+  ### Qlib因子自动化研发演示
 
-  - **[D (Development)](#_development)**
-    - Progressive implementation and code generation of factors.
-    - Automated testing and validation of financial factors.
+  #### 概述
 
-  #### [Objective](#_summary)
+  展示量化因子研发的迭代过程：
+  - 假设生成与验证
+  - 知识积累与构建
+  - 决策制定与优化
 
-  To demonstrate the dynamic evolution of financial factors through the Qlib platform, emphasizing how each iteration enhances the accuracy and reliability of the resulting financial factors.
+  #### 自动化研发流程
 
-qlib_factor_from_report_rich_style_description : |-
-  ### R&D Agent-Qlib: Automated Quantitative Trading & Factor Extraction from Financial Reports Demo
+  - **研究环节** 📚
+    - 持续迭代因子假设
+    - 构建量化研究体系
+    - 积累因子设计经验
 
-  #### [Overview](#_summary)
+  - **开发环节** 💻
+    - 自动化因子实现
+    - 因子性能评估
+    - 持续优化迭代
 
-  This demo showcases the process of extracting factors from financial research reports, implementing these factors, and analyzing their performance through Qlib backtest, continually expanding and refining the factor library.
-
-  #### [Automated R&D](#_rdloops)
-
-  - **[R (Research)](#_research)**
-    - Iterative development of ideas and hypotheses from financial reports.
-    - Continuous learning and knowledge construction.
-
-  - **[D (Development)](#_development)**
-    - Progressive factor extraction and code generation.
-    - Automated implementation and testing of financial factors.
-
-  #### [Objective](#_summary)
+  #### 核心目标
 
   <table border="1" style="width:100%; border-collapse: collapse;">
     <tr>
-      <td>💡 <strong>Innovation </strong></td>
-      <td>Tool to quickly extract and test factors from research reports.</td>
+      <td>🎯 <strong>效果</strong></td>
+      <td>提升因子的预测能力和稳定性</td>
     </tr>
     <tr>
-      <td>⚡ <strong>Efficiency </strong></td>
-      <td>Rapid identification of valuable factors from numerous reports.</td>
+      <td>🔄 <strong>迭代</strong></td>
+      <td>通过持续反馈优化因子设计</td>
     </tr>
     <tr>
-      <td>🗃️ <strong>Outputs </strong></td>
-      <td>Expand and refine the factor library to support further research.</td>
+      <td>📈 <strong>产出</strong></td>
+      <td>构建高质量的因子库</td>
+    </tr>
+  </table>
+
+qlib_factor_from_report_rich_style_description: |-
+  ### Qlib因子提取与自动化研发演示
+
+  #### 概述
+
+  展示从金融研报中提取因子的完整流程：
+  - 智能提取因子信息
+  - 自动化实现与测试
+  - 持续优化与扩展
+
+  #### 自动化研发流程
+
+  - **研究环节** 📚
+    - 持续迭代因子假设
+    - 构建量化研究体系
+    - 积累因子设计经验
+
+  - **开发环节** 💻
+    - 自动化因子实现
+    - 因子性能评估
+    - 持续优化迭代
+
+  #### 核心目标
+
+  <table border="1" style="width:100%; border-collapse: collapse;">
+    <tr>
+      <td>🎯 <strong>效果</strong></td>
+      <td>提升因子的预测能力和稳定性</td>
+    </tr>
+    <tr>
+      <td>🔄 <strong>迭代</strong></td>
+      <td>通过持续反馈优化因子设计</td>
+    </tr>
+    <tr>
+      <td>📈 <strong>产出</strong></td>
+      <td>构建高质量的因子库</td>
     </tr>
   </table>
 
 qlib_factor_experiment_setting: |-
-  | Dataset 📊 | Model 🤖    | Factors 🌟       | Data Split  🧮                                   |
-  |---------|----------|---------------|-------------------------------------------------|
-  | CSI300  | LGBModel | Alpha158 Plus | Train: 2008-01-01 to 2014-12-31 <br> Valid: 2015-01-01 to 2016-12-31 <br> Test &nbsp;: 2017-01-01 to 2020-08-01 |
+  实验配置说明：
 
+  | 配置项 | 详细信息 |
+  |--------|----------|
+  | 📊 数据集 | CSI300（沪深300成分股） |
+  | 🤖 模型 | RDAgent-dev（基于深度学习的预测模型） |
+  | 🌟 因子 | Alpha158系列（经典量化因子集） |
+  | 🧮 数据划分 | • 训练集：2008-01-01 至 2017-12-31<br>• 验证集：2018-01-01 至 2020-12-31<br>• 测试集：2021-01-01 至 2025-02-28 |
+
+  注意事项：
+  - 确保数据质量和完整性
+  - 避免未来数据泄露
+  - 保持时间序列连续性
 
 qlib_model_background: |-
-  The model is a machine learning or deep learning structure used in quantitative investment to predict the returns and risks of a portfolio or a single asset. Models are employed by investors to generate forecasts based on historical data and identified factors, which are central to many quantitative investment strategies.
-  Each model takes the factors as input and predicts the future returns. Usually, the bigger the model is, the better the performance would be.
-  The model is defined in the following parts:
-  1. Name: The name of the model.
-  2. Description: The description of the model.
-  3. Architecture: The detailed architecture of the model, such as neural network layers or tree structures.
-  4. Hyperparameters: The hyperparameters used in the model, such as learning rate, number of epochs, etc.
-  5. ModelType: The type of the model, "Tabular" for tabular model and "TimeSeries" for time series model.
-  The model should provide clear and detailed documentation of its architecture and hyperparameters. One model should statically define one output with a fixed architecture and hyperparameters. For example, a model with an two GRU layer and a model with three GRU layer should be considered two different models.
+  你是一个专业的量化模型专家。请帮助用户理解和设计量化投资模型：
+
+  模型定义：
+  - 用于预测投资组合或单个资产的收益和风险
+  - 基于历史数据和因子生成预测
+  - 是量化投资策略的核心组成部分
+
+  模型包含以下部分：
+  1. 名称：模型的标识名称
+  2. 描述：模型的详细说明
+  3. 架构：具体的网络结构或树形结构
+  4. 超参数：学习率、训练轮数等关键参数
+  5. 类型：分为表格型(Tabular)和时序型(TimeSeries)
+
+  重要说明：
+  - 架构和参数需要固定
+  - 不同结构视为不同模型
+  - 模型大小通常与性能正相关
 
 qlib_model_interface: |-
-  Your python code should follow the interface to better interact with the user's system.
-  You code should contain several parts:
-  1. The import part: import the necessary libraries.
-  2. A class which is a sub-class of pytorch.nn.Module. This class should should have a init function and a forward function which inputs a tensor and outputs a tensor.
-  3. Set a variable called "model_cls" to the class you defined.
+  你是一个专业的深度学习开发专家。请按照以下规范编写模型代码：
 
-  The user will save your code into a python file called "model.py". Then the user imports model_cls in file "model.py" after setting the cwd into the directory:
-  ```python
-  from model import model_cls
-  ```
-  So your python code should follow the pattern:
-  ```python
-  class XXXModel(torch.nn.Module):
-      ...
-  model_cls = XXXModel
-  ```
+  代码结构：
+  1. 导入部分：
+     - 必要的PyTorch库
+     - 其他辅助库
 
-  The model has two types, "Tabular" for tabular model and "TimeSeries" for time series model. The input shape to a tabular model is (batch_size, num_features) and the input shape to a time series model is (batch_size, num_features, num_timesteps). The output shape of the model should be (batch_size, 1).
-  The "batch_size" is a dynamic value which is determined by the input of forward function.
-  The "num_features" and "num_timesteps" are static which will be provided to the model through init function.
-  User will initialize the tabular model with the following code:
-  ```python
-  model = model_cls(num_features=num_features)
-  ```
-  User will initialize the time series model with the following code:
-  ```python
-  model = model_cls(num_features=num_features, num_timesteps=num_timesteps)
-  ```
-  No other parameters will be passed to the model so give other parameters a default value or just make them static.
+  2. 模型类定义：
+     - 继承自torch.nn.Module
+     - 包含__init__和forward方法
+     - 类名赋值给model_cls变量
 
-  When dealing with TimeSeries model, remember to permute the input tensor since the input tensor is in the shape of (batch_size, num_features, num_timesteps) and a normal time series model is expecting the input tensor in the shape of (batch_size, num_timesteps, num_features).
+  模型类型：
+  1. 表格型(Tabular)：
+     - 输入形状：(batch_size, num_features)
+     - 初始化：model_cls(num_features=num_features)
 
-  Don't write any try-except block in your python code. The user will catch the exception message and provide the feedback to you. Also, don't write main function in your python code. The user will call the forward method in the model_cls to get the output tensor.
+  2. 时序型(TimeSeries)：
+     - 输入形状：(batch_size, num_features, num_timesteps)
+     - 初始化：model_cls(num_features=num_features, num_timesteps=num_timesteps)
+     - 注意：需要调整输入张量维度顺序
 
-  Please notice that your model should only use current features as input. The user will provide the input tensor to the model's forward function.
-
+  注意事项：
+  - 输出形状统一为(batch_size, 1)
+  - 不使用try-except语句
+  - 不编写main函数
+  - 其他参数使用默认值
+  - 仅使用当前特征作为输入
 
 qlib_model_output_format: |-
-  Your output should be a tensor with shape (batch_size, 1). 
-  The output tensor should be saved in a file named "output.pth" in the same directory as your python file.
-  The user will evaluate the shape of the output tensor so the tensor read from "output.pth" should be 8 numbers.
+  你是一个专业的深度学习输出专家。请按照以下格式输出模型结果：
+
+  输出要求：
+  - 张量形状：(batch_size, 1)
+  - 保存为 output.pth 文件
+  - 文件位置：与模型代码同目录
+  - 测试数据：确保输出8个数字
 
 qlib_model_simulator: |-
-  The models will be sent into Qlib to train and evaluate their performance in predicting future returns. Hypothesis is improved upon checking the feedback on the results. 
-  Qlib is an AI-oriented quantitative investment platform that aims to realize the potential, empower research, and create value using AI technologies in quantitative investment, from exploring ideas to implementing productions. Qlib supports diverse machine learning modeling paradigms, including supervised learning, market dynamics modeling, and reinforcement learning (RL).
-  User will use Qlib to automatically perform the following tasks:
-  1. Generate a baseline factor table.
-  2. Train the model defined in your class Net to predict the next several days' returns based on the factor values.
-  3. Build a portfolio based on the predicted returns using a specific strategy.
-  4. Evaluate the portfolio's performance, including metrics such as return, Sharpe ratio, max drawdown, and others.
-  5. Iterate on growing the hypothesis to enable model improvements based on performance evaluations and feedback.
+  你是一个专业的量化回测专家。你的模型将用于：
+
+  系统概述：
+  Qlib是一个面向AI的量化投资平台，支持多种机器学习范式：
+  - 监督学习
+  - 市场动态建模
+  - 强化学习
+
+  自动化流程：
+  1. 生成基准因子表
+  2. 训练预测模型
+  3. 构建投资组合
+  4. 评估策略表现
+  5. 基于反馈优化模型
 
 qlib_model_rich_style_description: |-
-  ### Qlib Model Evolving Automatic R&D Demo
-  
-  #### [Overview](#_summary)
-  
-  The demo showcases the iterative process of hypothesis generation, knowledge construction, and decision-making in model construction in quantitative finance. It highlights how models evolve through continuous feedback and refinement.
-  
-  #### [Automated R&D](#_rdloops)
-  
-  - **[R (Research)](#_research)**
-    - Iteration of ideas and hypotheses.
-    - Continuous learning and knowledge construction.
-  
-  - **[D (Development)](#_development)**
-    - Evolving code generation and model refinement.
-    - Automated implementation and testing of models.
-  
-  #### [Objective](#_summary)
-  
-  To demonstrate the dynamic evolution of models through the Qlib platform, emphasizing how each iteration enhances the accuracy and reliability of the resulting models. 
+  ### Qlib模型自动化研发演示
+
+  #### 概述
+
+  展示量化金融模型构建中的迭代过程：
+  - 假设生成
+  - 知识构建
+  - 决策制定
+
+  #### 自动化研发流程
+
+  - **研究环节**
+    - 持续迭代想法和假设
+    - 不断积累专业知识
+
+  - **开发环节**
+    - 持续优化代码生成
+    - 自动化实现和测试
+
+  #### 目标
+
+  通过 Qlib 平台展示模型的动态演进，强调迭代优化对提升模型准确性和可靠性的重要性。
 
 qlib_model_experiment_setting: |-
-  | Dataset 📊 | Model 🤖    | Factors 🌟       | Data Split  🧮                                   |
-  |---------|----------|---------------|-------------------------------------------------|
-  | CSI300  | RDAgent-dev | 20 factors (Alpha158)  | Train: 2008-01-01 to 2014-12-31 <br> Valid: 2015-01-01 to 2016-12-31 <br> Test &nbsp;: 2017-01-01 to 2020-08-01 |
+  | 数据集 📊 | 模型 🤖     | 因子 🌟        | 数据划分 🧮                                    |
+  |---------|------------|--------------|-----------------------------------------------|
+  | CSI300  | RDAgent-dev| Alpha158系列 | 训练集: 2008-01-01 至 2017-12-31 <br> 验证集: 2018-01-01 至 2020-12-31 <br> 测试集: 2021-01-01 至 2025-02-28 |

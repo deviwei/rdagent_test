@@ -136,9 +136,9 @@ The following environment variables can be set in the `.env` file to customize t
         - **fields_group**: Defines the fields group, with the value `feature`.
         - **col_list**: A list of columns used, including various indicators such as `RESI5`, `WVMA5`, `RSQR5`, and others.
         - **start_time**: The start date for the data, set to `2008-01-01`.
-        - **end_time**: The end date for the data, set to `2020-08-01`.
-        - **fit_start_time**: The start date for fitting the model, set to `2008-01-01`.
-        - **fit_end_time**: The end date for fitting the model, set to `2014-12-31`.
+        - **end_time**: The end date for the data, set to `2025-02-28`.
+        - **fit_start_time**: The start date for fitting the model, set to `2018-01-01`.
+        - **fit_end_time**: The end date for fitting the model, set to `2025-02-28`.
 
     - The default hyperparameters used in the configuration are as follows:
         - **n_epochs**: The number of epochs, set to `100`.

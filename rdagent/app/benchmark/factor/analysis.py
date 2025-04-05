@@ -1,14 +1,24 @@
+# 导入 JSON 处理库
 import json
+# 导入序列化库
 import pickle
+# 导入路径处理库
 from pathlib import Path
 
+# 导入命令行参数处理库
 import fire
+# 导入绘图库
 import matplotlib.pyplot as plt
+# 导入数值计算库
 import numpy as np
+# 导入数据处理库
 import pandas as pd
+# 导入统计可视化库
 import seaborn as sns
 
+# 导入基准测试配置
 from rdagent.components.benchmark.conf import BenchmarkSettings
+# 导入因子实现评估工具
 from rdagent.components.benchmark.eval_method import FactorImplementEval
 
 
@@ -16,48 +26,51 @@ class BenchmarkAnalyzer:
     """基准测试分析器，用于分析和处理因子实现的评估结果"""
     
     def __init__(self, settings, only_correct_format=False):
-        """
-        初始化分析器
-        @param settings: 基准测试设置
-        @param only_correct_format: 是否只分析格式正确的结果
-        """
+        """初始化分析器"""
+        # 保存基准测试设置
         self.settings = settings
+        # 加载因子索引映射
         self.index_map = self.load_index_map()
+        # 是否只分析格式正确的结果
         self.only_correct_format = only_correct_format
 
     def load_index_map(self):
-        """
-        从基准数据文件中加载因子索引映射
-        @return: 包含因子名称、类别和难度的字典
-        """
+        """从基准数据文件中加载因子索引映射"""
+        # 创建空字典存储映射关系
         index_map = {}
+        # 打开并读取基准数据文件
         with open(self.settings.bench_data_path, "r") as file:
             factor_dict = json.load(file)
+        # 遍历因子字典，构建映射关系
         for factor_name, data in factor_dict.items():
             index_map[factor_name] = (factor_name, data["Category"], data["Difficulty"])
         return index_map
 
     def load_data(self, file_path):
+        """加载评估结果数据"""
+        # 转换为 Path 对象
         file_path = Path(file_path)
+        # 验证文件路径和后缀
         if not (file_path.is_file() and file_path.suffix == ".pkl"):
             raise ValueError("Invalid file path")
-
+        # 读取 pickle 文件
         with file_path.open("rb") as f:
             res = pickle.load(f)
-
         return res
 
     def process_results(self, results):
-        """
-        处理多个实验结果
-        @param results: 包含实验名称和结果路径的字典
-        @return: 处理后的最终结果
-        """
+        """处理多个实验结果"""
+        # 创建空字典存储处理结果
         final_res = {}
+        # 遍历实验结果
         for experiment, path in results.items():
+            # 加载数据
             data = self.load_data(path)
+            # 汇总结果
             summarized_data = FactorImplementEval.summarize_res(data)
+            # 分析数据
             processed_data = self.analyze_data(summarized_data)
+            # 存储最终行结果
             final_res[experiment] = processed_data.iloc[-1, :]
         return final_res
 

@@ -14,7 +14,7 @@ data.to_hdf("./daily_pv_all.h5", key="data")
 fields = ["$open", "$close", "$high", "$low", "$volume", "$factor"]
 data = (
     (
-        D.features(instruments, fields, start_time="2018-01-01", end_time="2019-12-31", freq="day")
+        D.features(instruments, fields, start_time="2018-01-01", end_time="2025-02-28", freq="day")
         .swaplevel()
         .sort_index()
     )

@@ -9,6 +9,7 @@ fire
 fuzzywuzzy
 openai
 litellm
+httpx[socks]
 azure.identity
 
 numpy # we use numpy as default data format. So we have to install numpy

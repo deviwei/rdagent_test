@@ -6,7 +6,7 @@ If you want to try the latest version or contribute to RD-Agent. You can install
 
    .. code-block:: bash
 
-      git clone https://github.com/microsoft/RD-Agent
+      git clone https://github.com/deviwei/rdagent_test
 
 
 🔧Prepare for development

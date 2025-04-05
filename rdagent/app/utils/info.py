@@ -52,7 +52,7 @@ def rdagent_info():
     """collect rdagent related info"""
     current_version = importlib.metadata.version("rdagent")
     logger.info(f"RD-Agent version: {current_version}")
-    api_url = f"https://api.github.com/repos/microsoft/RD-Agent/contents/requirements.txt?ref=main"
+    api_url = f"https://github.com/deviwei/rdagent_test/contents/requirements.txt?ref=main"
     response = requests.get(api_url)
     if response.status_code == 200:
         files = response.json()

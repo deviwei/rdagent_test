@@ -113,7 +113,7 @@ class ModelExperimentLoaderFromDict(ModelTaskLoader):
             task_l.append(task)
         return QlibModelExperiment(sub_tasks=task_l)
 
-
+# 这个类的主要作用是从 PDF 文件中提取模型信息并转换为可执行的实验配置
 class ModelExperimentLoaderFromPDFfiles(ModelTaskLoader):
     def load(self, file_or_folder_path: str) -> dict:
         docs_dict = load_and_process_pdfs_by_langchain(file_or_folder_path)  # dict{file_path:content}

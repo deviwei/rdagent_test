@@ -10,6 +10,7 @@ from rdagent.log import rdagent_logger as logger
 from rdagent.scenarios.general_model.scenario import GeneralModelScenario
 from rdagent.scenarios.qlib.developer.model_coder import QlibModelCoSTEER
 
+# 主要用于qlib模型的生成
 
 def extract_models_and_implement(report_file_path: str) -> None:
     """
